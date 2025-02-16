@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	bucket := "my-bucket"
+	bucket := "cloudnost"
 	prefix := ""
 	fileType := ".txt" // Example filter
 	startDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)

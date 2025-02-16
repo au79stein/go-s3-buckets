@@ -40,9 +40,13 @@ func StoreMetadata(db *sql.DB, fileName, s3Prefix, s3Key, fileHash string) error
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	_, err := db.Exec(`INSERT INTO uploads (file_name, s3_prefix, s3_key, file_hash, timestamp, allowed_users)
 		VALUES (?, ?, ?, ?, ?, ?)`, fileName, s3Prefix, s3Key, fileHash, timestamp, "")
+
 	if err != nil {
+		fmt.Printf("DB INSERT ERROR: %v\n", err) // <-- Add this line for debugging
 		return fmt.Errorf("failed to store metadata: %v", err)
 	}
+
+	fmt.Println("Metadata stored successfully.") // <-- Add this for confirmation
 	return nil
 }
 
