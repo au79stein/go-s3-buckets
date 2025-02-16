@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"time"
@@ -9,16 +10,24 @@ import (
 )
 
 func main() {
-	bucket := "cloudnost"
+	// Define and parse command-line arguments
+	bucket := flag.String("bucket", "", "Name of the S3 bucket (required)")
+	flag.Parse()
+
+	if *bucket == "" {
+		fmt.Fprintln(os.Stderr, "Error: --bucket argument is required")
+		os.Exit(1)
+	}
+
 	prefix := ""
 	fileType := ".txt" // Example filter
 	startDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 	endDate := time.Now()
 	region := "us-east-1" // Ensure this is dynamic in your implementation
 
-	files, err := s3utils.ListS3Objects(bucket, prefix, fileType, startDate, endDate, region)
+	files, err := s3utils.ListS3Objects(*bucket, prefix, fileType, startDate, endDate, region)
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 
