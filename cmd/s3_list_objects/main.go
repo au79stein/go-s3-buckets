@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -11,48 +10,40 @@ import (
 )
 
 func main() {
-	// Define command-line arguments
+	// Define command-line flags
 	bucket := flag.String("bucket", "", "S3 bucket name (required)")
-	prefix := flag.String("prefix", "", "S3 prefix to filter objects")
-	fileType := flag.String("file-type", ".txt", "File type filter (e.g., .txt, .csv)")
-	region := flag.String("region", "us-east-1", "AWS region (optional, defaults to us-east-1)")
-	startDateStr := flag.String("start-date", "2024-01-01", "Start date for filtering (YYYY-MM-DD)")
-	endDateStr := flag.String("end-date", "", "End date for filtering (YYYY-MM-DD, defaults to current time)")
+	prefix := flag.String("prefix", "", "S3 object prefix (optional)")
+	fileType := flag.String("filetype", "", "File extension filter (e.g., .txt)")
+	region := flag.String("region", "us-east-1", "AWS region (default: us-east-1)")
+	profile := flag.String("profile", "", "AWS profile to use (optional)")
 
 	flag.Parse()
 
-	// Validate required arguments
+	// Ensure required flag is provided
 	if *bucket == "" {
 		fmt.Println("Error: --bucket is required")
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	// Parse date arguments
-	startDate, err := time.Parse("2006-01-02", *startDateStr)
-	if err != nil {
-		fmt.Println("Error parsing start-date:", err)
-		os.Exit(1)
-	}
-
+	startDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 	endDate := time.Now()
-	if *endDateStr != "" {
-		endDate, err = time.Parse("2006-01-02", *endDateStr)
-		if err != nil {
-			fmt.Println("Error parsing end-date:", err)
-			os.Exit(1)
-		}
-	}
 
-	// List objects
-	files, err := s3utils.ListS3Objects(*bucket, *prefix, *fileType, startDate, endDate, *region)
+	// Fetch objects from S3
+	files, err := s3utils.ListS3Objects(*bucket, *prefix, *fileType, startDate, endDate, *region, *profile)
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
 
-	for _, file := range files {
-		fmt.Println(file)
+	// Print retrieved file list
+	if len(files) == 0 {
+		fmt.Println("No matching objects found.")
+	} else {
+		fmt.Println("S3 Objects:")
+		for _, file := range files {
+			fmt.Println(file)
+		}
 	}
 }
 

@@ -2,57 +2,34 @@ package s3utils
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
-	//"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-// Debug function to print credentials
-func printAWSCredentials(sess *session.Session) {
-	creds, err := sess.Config.Credentials.Get()
-	if err != nil {
-		fmt.Println("Failed to retrieve credentials:", err)
-		return
-	}
-
-	// Ensure credentials are not empty before printing
-	if len(creds.AccessKeyID) == 0 || len(creds.SecretAccessKey) == 0 {
-		fmt.Println("Credentials appear to be empty! Check AWS profile or environment variables.")
-		return
-	}
-
-	fmt.Println("AWS_ACCESS_KEY_ID:", creds.AccessKeyID)
-	fmt.Println("AWS_SECRET_ACCESS_KEY:", creds.SecretAccessKey)
-	fmt.Println("AWS_SESSION_TOKEN:", creds.SessionToken)
-}
-
 // ListS3Objects lists objects in an S3 bucket with filtering options.
-func ListS3Objects(bucketName, prefix, fileType string, startDate, endDate time.Time, region string) ([]string, error) {
-	// Debug: Check AWS_PROFILE
-	awsProfile := os.Getenv("AWS_PROFILE")
-	log.Println("AWS_PROFILE environment variable:", awsProfile)
-
-	// Explicitly load credentials using profile
-	sess, err := session.NewSessionWithOptions(session.Options{
+func ListS3Objects(bucketName, prefix, fileType string, startDate, endDate time.Time, region, profile string) ([]string, error) {
+	// Set session options
+	options := session.Options{
 		Config: aws.Config{
 			Region: aws.String(region),
-			CredentialsChainVerboseErrors: aws.Bool(true),
-			LogLevel: aws.LogLevel(aws.LogDebugWithHTTPBody), // Enable debug logging
 		},
-		Profile:           "default", // Explicitly set the profile name
 		SharedConfigState: session.SharedConfigEnable,
-	})
+	}
+
+	// If a profile is specified, use it
+	if profile != "" {
+		options.Profile = profile
+	}
+
+	// Create AWS session
+	sess, err := session.NewSessionWithOptions(options)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create AWS session: %w", err)
 	}
-
-	// Print credentials to verify they match Python output
-	printAWSCredentials(sess)
 
 	svc := s3.New(sess)
 	input := &s3.ListObjectsV2Input{
@@ -62,15 +39,13 @@ func ListS3Objects(bucketName, prefix, fileType string, startDate, endDate time.
 
 	var files []string
 
-	// Debugging: Try single `ListObjectsV2` request first
+	// Perform ListObjectsV2 operation
 	result, err := svc.ListObjectsV2(input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list objects: %w", err)
 	}
 
 	for _, obj := range result.Contents {
-		log.Printf("Object Found: %s (LastModified: %v)", *obj.Key, *obj.LastModified)
-
 		// Apply date filtering
 		if obj.LastModified.After(startDate) && obj.LastModified.Before(endDate) {
 			// Apply file type filtering if needed
@@ -79,9 +54,6 @@ func ListS3Objects(bucketName, prefix, fileType string, startDate, endDate time.
 			}
 		}
 	}
-
-	// Debugging: Print final matched files
-	log.Println("Filtered S3 Files:", files)
 
 	return files, nil
 }
@@ -93,10 +65,16 @@ func hasFileType(key, fileType string) bool {
 
 // UploadFileToS3 uploads a file to an S3 bucket and returns the uploaded file's key.
 func UploadFileToS3(filePath, bucketName, s3Prefix, region string) (string, error) {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-east-1"),
-		//Region: aws.String(region),
-	})
+	// Set session options
+	options := session.Options{
+		Config: aws.Config{
+			Region: aws.String(region),
+		},
+		SharedConfigState: session.SharedConfigEnable,
+	}
+
+	// Create AWS session
+	sess, err := session.NewSessionWithOptions(options)
 	if err != nil {
 		return "", fmt.Errorf("failed to create AWS session: %w", err)
 	}
