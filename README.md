@@ -42,6 +42,32 @@
 	7 directories, 15 files
   ```
 
+## Database Information
+
+I'm using sqlite to test.  Move to postres later.
+
+Just a simple, single table (for now) to track meta data of local files pushed to s3 bucket. 
+Information such as file name, bucket name, date_time stamp, and hash of file (for dedup) is maintained here.
+
+### uploads table
+
+  ```
+    $: sqlite3 uploads.db .tables
+    uploads
+
+    $: sqlite3 uploads.db .schema
+    CREATE TABLE uploads (
+		    id INTEGER PRIMARY KEY AUTOINCREMENT,
+		    file_name TEXT,
+		    s3_prefix TEXT,
+		    s3_key TEXT UNIQUE,
+		    file_hash TEXT UNIQUE,
+		    timestamp TEXT,
+		    allowed_users TEXT
+	    );
+    CREATE TABLE sqlite_sequence(name,seq);
+  ```
+
 ## Ancillary Stuff
 
   - python_auth_hdrs.py
