@@ -41,3 +41,14 @@
 	
 	7 directories, 15 files
   ```
+
+## Ancillary Stuff
+
+  - python_auth_hdrs.py
+    simple, debug, used to view aws auth header when trying to compare go sdk with python boto3
+
+  - python_credentials.py
+    debug and validation, used to view user credentials, from an aws perspective.  What are my credentials when running
+
+
+
