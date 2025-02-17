@@ -35,8 +35,9 @@
     - optionally accepts region
 
     ```
-     bin/s3_upload_tracker --bucket <bucket_name> --prefix example --file policy.json
+    bin/s3_upload_tracker --bucket <bucket_name> --prefix example --file policy.json
     ```
+    
     ```
     $: sqlite3 uploads.db "select * from uploads"
 
