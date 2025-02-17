@@ -4,10 +4,10 @@
 ## Clean, Build, Run, and other Stuff
 
   ```
-	richg@rocky2:[2025-02-16 16:02:12][/mnt/homedirs/richg/Efforts/AWS/S3/go_s3_buckets]$: go build -o bin/s3_list_objects cmd/s3_list_objects/main.go
-	richg@rocky2:[2025-02-16 16:02:17][/mnt/homedirs/richg/Efforts/AWS/S3/go_s3_buckets]$:
-	richg@rocky2:[2025-02-16 16:02:18][/mnt/homedirs/richg/Efforts/AWS/S3/go_s3_buckets]$:
-	richg@rocky2:[2025-02-16 16:02:18][/mnt/homedirs/richg/Efforts/AWS/S3/go_s3_buckets]$: bin/s3_list_objects --bucket <bucket_name> --region us-east-1 --profile default
+	$: go build -o bin/s3_list_objects cmd/s3_list_objects/main.go
+	$:
+	$:
+	$: bin/s3_list_objects --bucket <bucket_name> --region us-east-1 --profile default
 	S3 Objects:
   ```
 
