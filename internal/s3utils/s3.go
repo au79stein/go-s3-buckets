@@ -2,7 +2,7 @@ package s3utils
 
 import (
 	"fmt"
-	"os"
+	//"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -10,8 +10,15 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
+// S3Object represents metadata of an S3 object.
+type S3Object struct {
+	Key          string
+	Size         int64
+	LastModified time.Time
+}
+
 // ListS3Objects lists objects in an S3 bucket with filtering options.
-func ListS3Objects(bucketName, prefix, fileType string, startDate, endDate time.Time, region, profile string) ([]string, error) {
+func ListS3Objects(bucketName, prefix, fileType string, startDate, endDate time.Time, region, profile string) ([]S3Object, error) {
 	// Set session options
 	options := session.Options{
 		Config: aws.Config{
@@ -37,7 +44,7 @@ func ListS3Objects(bucketName, prefix, fileType string, startDate, endDate time.
 		Prefix: aws.String(prefix),
 	}
 
-	var files []string
+	var objects []S3Object
 
 	// Perform ListObjectsV2 operation
 	result, err := svc.ListObjectsV2(input)
@@ -50,53 +57,20 @@ func ListS3Objects(bucketName, prefix, fileType string, startDate, endDate time.
 		if obj.LastModified.After(startDate) && obj.LastModified.Before(endDate) {
 			// Apply file type filtering if needed
 			if fileType == "" || hasFileType(*obj.Key, fileType) {
-				files = append(files, *obj.Key)
+				objects = append(objects, S3Object{
+					Key:          *obj.Key,
+					Size:         *obj.Size,
+					LastModified: *obj.LastModified,
+				})
 			}
 		}
 	}
 
-	return files, nil
+	return objects, nil
 }
 
 // Helper function to check file type.
 func hasFileType(key, fileType string) bool {
 	return len(key) >= len(fileType) && key[len(key)-len(fileType):] == fileType
-}
-
-// UploadFileToS3 uploads a file to an S3 bucket and returns the uploaded file's key.
-func UploadFileToS3(filePath, bucketName, s3Prefix, region string) (string, error) {
-	// Set session options
-	options := session.Options{
-		Config: aws.Config{
-			Region: aws.String(region),
-		},
-		SharedConfigState: session.SharedConfigEnable,
-	}
-
-	// Create AWS session
-	sess, err := session.NewSessionWithOptions(options)
-	if err != nil {
-		return "", fmt.Errorf("failed to create AWS session: %w", err)
-	}
-
-	svc := s3.New(sess)
-	file, err := os.Open(filePath)
-	if err != nil {
-		return "", fmt.Errorf("failed to open file: %w", err)
-	}
-	defer file.Close()
-
-	s3Key := fmt.Sprintf("%s/%s", s3Prefix, filePath)
-
-	_, err = svc.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(bucketName),
-		Key:    aws.String(s3Key),
-		Body:   file,
-	})
-	if err != nil {
-		return "", fmt.Errorf("failed to upload file: %w", err)
-	}
-
-	return s3Key, nil
 }
 

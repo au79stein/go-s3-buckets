@@ -30,19 +30,20 @@ func main() {
 	endDate := time.Now()
 
 	// Fetch objects from S3
-	files, err := s3utils.ListS3Objects(*bucket, *prefix, *fileType, startDate, endDate, *region, *profile)
+	objects, err := s3utils.ListS3Objects(*bucket, *prefix, *fileType, startDate, endDate, *region, *profile)
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
 
-	// Print retrieved file list
-	if len(files) == 0 {
+	// Print retrieved objects with metadata
+	if len(objects) == 0 {
 		fmt.Println("No matching objects found.")
 	} else {
 		fmt.Println("S3 Objects:")
-		for _, file := range files {
-			fmt.Println(file)
+		for _, obj := range objects {
+			fmt.Printf("Key: %s | Size: %d | LastModified: %s\n",
+				obj.Key, obj.Size, obj.LastModified.Format(time.RFC3339))
 		}
 	}
 }
