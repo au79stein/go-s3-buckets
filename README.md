@@ -11,6 +11,15 @@
 	S3 Objects:
   ```
 
+## Utilities
+
+  1. bin/s3_list_objects
+	requires s3 bucket name
+	optionally accepts s3 bucket prefix
+	optional filter on filetype (e.g. ".txt", ".pdf")
+	optional region, defaults to us-east-1
+	optional profile name, specify an aws profile name or default
+
 ## file hierarchy and more stuff
 
   ```
