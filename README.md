@@ -13,13 +13,36 @@
 
 ## Utilities
 
-  1. bin/s3_list_objects
+  1. bin/s3\_list_objects
 
-    - requires s3 bucket name
-    - optionally accepts s3 bucket prefix
-    - optional filter on filetype (e.g. ".txt", ".pdf")
-    - optional region, defaults to us-east-1
-    optional profile name, specify an aws profile name or default
+  	- requires s3 bucket name
+  	- optionally accepts s3 bucket prefix
+  	- optional filter on filetype (e.g. ".txt", ".pdf")
+  	- optional region, defaults to us-east-1
+  	- optional profile name, specify an aws profile name or default
+
+  	```
+  	bin/s3_list_objects --bucket <bucket_name>
+  	bin/s3_list_objects --bucket <bucket_name> --prefix <prefix>
+  	bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go
+  	bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go --region us-east-1
+  	```
+  	
+  1. bin/s3\_upload_tracker
+    - requires --bucket
+    - requires list of files --file
+    - optionally accepts prefix
+    - optionally accepts region
+
+    ```
+     bin/s3_upload_tracker --bucket <bucket_name> --prefix example --file policy.json
+    ```
+    ```
+    $: sqlite3 uploads.db "select * from uploads"
+
+    2|README.md|example|example/README.md|0d2da6811d326df65757f1705bca4f5fe6cc9971f6179f7a6716ef750d39527a|2025-02-17T16:11:31Z|
+    3|policy.json|example|example/policy.json|cbd74b3c1ed85216804a157f0c48088d5f3e0c684941567386ca0601610548d9|2025-02-17T16:12:26Z|
+    ```
 
 ## file hierarchy and more stuff
 
