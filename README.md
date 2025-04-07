@@ -15,18 +15,18 @@
 
 1. bin/s3\_list_objects
 
-  	- requires s3 bucket name
-  	- optionally accepts s3 bucket prefix
-  	- optional filter on filetype (e.g. ".txt", ".pdf")
-  	- optional region, defaults to us-east-1
-  	- optional profile name, specify an aws profile name or default
+    - requires s3 bucket name
+    - optionally accepts s3 bucket prefix
+    - optional filter on filetype (e.g. ".txt", ".pdf")
+    - optional region, defaults to us-east-1
+    - optional profile name, specify an aws profile name or default
 
-  	```
-  	    bin/s3_list_objects --bucket <bucket_name>
-  	    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix>
-  	    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go
-  	    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go --region us-east-1
-  	```
+    ```
+    bin/s3_list_objects --bucket <bucket_name>
+    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix>
+    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go
+    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go --region us-east-1
+    ```
   	
 1. bin/s3\_upload_tracker
     - requires --bucket
