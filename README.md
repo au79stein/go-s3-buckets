@@ -13,7 +13,7 @@
 
 ## Utilities
 
-  1. bin/s3\_list_objects
+1. bin/s3\_list_objects
 
   	- requires s3 bucket name
   	- optionally accepts s3 bucket prefix
@@ -22,20 +22,20 @@
   	- optional profile name, specify an aws profile name or default
 
   	```
-  	bin/s3_list_objects --bucket <bucket_name>
-  	bin/s3_list_objects --bucket <bucket_name> --prefix <prefix>
-  	bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go
-  	bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go --region us-east-1
+  	    bin/s3_list_objects --bucket <bucket_name>
+  	    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix>
+  	    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go
+  	    bin/s3_list_objects --bucket <bucket_name> --prefix <prefix> --filetype go --region us-east-1
   	```
   	
-  1. bin/s3\_upload_tracker
+1. bin/s3\_upload_tracker
     - requires --bucket
     - requires list of files --file
     - optionally accepts prefix
     - optionally accepts region
 
     ```
-    bin/s3_upload_tracker --bucket <bucket_name> --prefix example --file policy.json
+        bin/s3_upload_tracker --bucket <bucket_name> --prefix example --file policy.json
     ```
     
     ```
